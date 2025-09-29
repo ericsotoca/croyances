@@ -1,9 +1,8 @@
-```html
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>BeliefExplorer – Questionnaire Ennéagramme 5-6-7</title>
+    <title>BeliefExplorer – Ennéagramme Types 5-6-7</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
         :root{--accent:#0066cc;--accent-light:#4d94ff;--bg:#f7f9fc;--card:#fff;--text:#222;--muted:#666;--border:#e1e4e8;--danger:#dc3545;--bar:#ffcc00;}
@@ -19,7 +18,6 @@
         .controls label{font-size:.8rem;color:var(--muted);margin-right:.3rem;}
         .controls input[type=range]{width:100px;}
         .controls output{min-width:38px;font-weight:600;font-size:.9rem;color:var(--accent);}
-        .help-text{font-size:.75rem;color:var(--muted);margin-top:.25rem;width:100%;}
         .actions{margin:1.5rem 0;display:flex;flex-wrap:wrap;gap:.8rem;}
         button{border:none;border-radius:6px;padding:.6rem 1.1rem;font-size:1rem;cursor:pointer;transition:background .2s;}
         .primary{background:var(--accent);color:#fff;}
@@ -47,11 +45,9 @@
     <main>
         <section class="intro" aria-label="Présentation">
             <p>Cet outil explore les croyances typiques des types 5, 6 et 7 de l'ennéagramme. Les données restent stockées localement.</p>
-            <h3>Guide des échelles</h3>
+            <h3>Guide de l'échelle</h3>
             <ul>
                 <li><strong>Accord 1-7 :</strong> 1 = pas du tout d'accord, 7 = tout à fait d'accord</li>
-                <li><strong>Certitude 0-100 % :</strong> 0 = totalement incertain, 100 = absolument certain</li>
-                <li><strong>Émotion 1-7 :</strong> 1 = émotion nulle, 7 = émotion très intense</li>
             </ul>
         </section>
 
@@ -73,8 +69,6 @@
                         <th data-key="rank">N° ↕</th>
                         <th data-key="text">Croyance ↕</th>
                         <th data-key="agreement">Accord ↕</th>
-                        <th data-key="certainty">Certitude ↕</th>
-                        <th data-key="emotion">Émotion ↕</th>
                         <th data-key="score">Importance ↕</th>
                     </tr>
                 </thead>
@@ -205,7 +199,7 @@
         let beliefs = [];
         let sortState = { key: 'score', asc: false };
 
-        /* ===== INIT / RENDER / SAVE / COMPUTE ===== */
+        /* ===== INIT / RENDER / SAVE ===== */
         function init() {
             const stored = localStorage.getItem('beliefExplorer567');
             if (stored) { try { beliefs = JSON.parse(stored); } catch (e) { beliefs = []; } }
@@ -222,8 +216,6 @@
                 const existing = beliefs.find(b => b.id === idx);
                 const checked = existing ? 'checked' : '';
                 const agreement = existing ? existing.agreement : 4;
-                const certainty = existing ? existing.certainty : 50;
-                const emotion = existing ? existing.emotion : 4;
                 const card = document.createElement('div');
                 card.className = 'belief-card'; if (!checked) card.classList.add('disabled');
                 card.innerHTML = `
@@ -231,30 +223,24 @@
                     <input type="checkbox" id="b${idx}" ${checked} aria-label="Sélectionner cette croyance">
                     <label for="b${idx}" class="belief-text">${text}</label>
                     <div class="controls">
-                        <label>Accord 1-7</label><input type="range" min="1" max="7" value="${agreement}" aria-label="Accord"><output>${agreement}</output>
-                        <label>Certitude %</label><input type="range" min="0" max="100" value="${certainty}" aria-label="Certitude"><output>${certainty}%</output>
-                        <div class="help-text">0%=totalement incertain, 100%=absolument certain</div>
-                        <label>Émotion 1-7</label><input type="range" min="1" max="7" value="${emotion}" aria-label="Intensité émotionnelle"><output>${emotion}</output>
-                        <div class="help-text">1=aucune émotion, 7=très forte émotion</div>
+                        <label>Accord 1-7</label>
+                        <input type="range" min="1" max="7" value="${agreement}" aria-label="Accord">
+                        <output>${agreement}</output>
                     </div>
                 `;
                 const chk = card.querySelector('input[type="checkbox"]');
                 chk.addEventListener('change', () => { card.classList.toggle('disabled', !chk.checked); saveBelief(idx, text, chk.checked, card); });
-                card.querySelectorAll('input[type="range"]').forEach(sl => sl.addEventListener('input', () => {
-                    sl.nextElementSibling.textContent = sl.value + (sl.parentElement.querySelector('label').textContent.includes('%') ? '%' : '');
-                    if (chk.checked) saveBelief(idx, text, true, card);
-                }));
+                const slider = card.querySelector('input[type="range"]');
+                slider.addEventListener('input', () => { slider.nextElementSibling.textContent = slider.value; if (chk.checked) saveBelief(idx, text, true, card); });
                 container.appendChild(card);
             });
         }
         function saveBelief(id, text, selected, card) {
             const others = beliefs.filter(b => b.id !== id);
             if (selected) {
-                const agreement = parseInt(card.querySelectorAll('input[type="range"]')[0].value);
-                const certainty = parseInt(card.querySelectorAll('input[type="range"]')[1].value);
-                const emotion = parseInt(card.querySelectorAll('input[type="range"]')[2].value);
-                const score = Math.round(((agreement-1)/6 * (certainty/100) * (1 + 0.2 * (emotion-1)/6)) * 100) / 100;
-                others.push({ id, text, agreement, certainty, emotion, score });
+                const agreement = parseInt(card.querySelector('input[type="range"]').value);
+                const score = (agreement - 1) / 6;  // simple normalisation 0-1
+                others.push({ id, text, agreement, score });
             }
             beliefs = others;
             localStorage.setItem('beliefExplorer567', JSON.stringify(beliefs));
@@ -270,7 +256,7 @@
                 const tr = document.createElement('tr');
                 if (i < 10) tr.classList.add('top10');
                 const bar = `<span class="bar" style="width:${Math.max(4, b.score * 200)}px"></span>`;
-                tr.innerHTML = `<td>${b.id+1}</td><td>${b.text}</td><td>${b.agreement}</td><td>${b.certainty}%</td><td>${b.emotion}</td><td>${b.score}${bar}</td>`;
+                tr.innerHTML = `<td>${b.id+1}</td><td>${b.text}</td><td>${b.agreement}</td><td>${b.score.toFixed(2)}${bar}</td>`;
                 tbody.appendChild(tr);
             });
             document.getElementById('results').hidden = false;
@@ -294,20 +280,20 @@
             if (beliefs.length === 0) { alert("Aucune donnée à exporter."); return; }
             const top10 = [...beliefs].sort((a, b) => b.score - a.score).slice(0, 10);
             const date = new Date().toLocaleDateString('fr-FR');
-            let content = `BELIEFEXPLORER - RAPPORT ENNÉAGRAMME 5-6-7\nDate: ${date}\nNombre total de croyances évaluées: ${beliefs.length}\n\n=== MES 10 CROYANCES LES PLUS IMPORTANTES (Types 5-6-7) ===\n\n`;
+            let content = `BELIEFEXPLORER - RAPPORT ENNÉAGRAMME 5-6-7 (Accord simple)\nDate: ${date}\nNombre total de croyances évaluées: ${beliefs.length}\n\n=== MES 10 CROYANCES LES PLUS IMPORTANTES (Types 5-6-7) ===\n\n`;
             top10.forEach((b, i) => {
-                content += `${i+1}. ${b.text}\n   N°${b.id+1} | Accord: ${b.agreement}/7 | Certitude: ${b.certainty}% | Émotion: ${b.emotion}/7 | Score: ${b.score}/1.00\n\n`;
+                content += `${i+1}. ${b.text}\n   N°${b.id+1} | Accord: ${b.agreement}/7 | Score normalisé: ${b.score.toFixed(2)}/1.00\n\n`;
             });
-            content += `=== PROMPT POUR IA SPÉCIALISÉE ENNÉAGRAMME ===\n\nEn tant qu'expert en ennéagramme et développement personnel, analyse le profil de croyances ci-dessus en te concentrant sur les types 5 (Observateur), 6 (Loyal) et 7 (Enthousiaste) :\n\n1. TYPE DOMINANT & FIXATIONS :\nIdentifie le type dominant (5, 6 ou 7) et les croyances limitantes spécifiques à chaque type.\n\n2. PATTERNS DE PEUR :\nPour chaque type présent, dégage les peurs fondamentales (peur de l'envahissement, peur de l'abandon, peur de la douleur) qui se cachent derrière ces croyances.\n\n3. RECOMMANDATIONS SPÉCIFIQUES PAR TYPE :\n- Type 5 : Comment passer de l'observation à l'action ?\n- Type 6 : Comment développer la confiance intérieure ?\n- Type 7 : Comment rester présent aux émotions difficiles ?\n\n4. QUESTIONS DE RÉFLEXION TYPÉES :\nPropose 2 questions puissantes pour chaque type actif.\n\n=== DONNÉES COMPLÈTES ===\nFormat: N° | Croyance | Accord | Certitude | Émotion | Score\n${'-'.repeat(80)}\n`;
+            content += `=== PROMPT POUR IA SPÉCIALISÉE ENNÉAGRAMME ===\n\nEn tant qu'expert en ennéagramme, analyse le profil de croyances ci-dessus en te concentrant sur les types 5 (Observateur), 6 (Loyal) et 7 (Enthousiaste) :\n\n1. TYPE DOMINANT & FIXATIONS :\nIdentifie le type dominant et les croyances limitantes spécifiques.\n\n2. PATTERNS DE PEUR :\nDégage les peurs fondamentales (peur de l'envahissement, peur de l'abandon, peur de la douleur).\n\n3. RECOMMANDATIONS SPÉCIFIQUES PAR TYPE :\n- Type 5 : Comment passer de l'observation à l'action ?\n- Type 6 : Comment développer la confiance intérieure ?\n- Type 7 : Comment rester présent aux émotions difficiles ?\n\n4. QUESTIONS DE RÉFLEXION TYPÉES :\nPropose 2 questions puissantes pour chaque type actif.\n\n=== DONNÉES COMPLÈTES ===\nFormat: N° | Croyance | Accord/7 | Score normalisé\n${'-'.repeat(60)}\n`;
             const allSorted = [...beliefs].sort((a, b) => b.score - a.score);
             allSorted.forEach(b => {
-                content += `${b.id+1} | "${b.text}" | ${b.agreement} | ${b.certainty}% | ${b.emotion} | ${b.score}\n`;
+                content += `${b.id+1} | "${b.text}" | ${b.agreement}/7 | ${b.score.toFixed(2)}\n`;
             });
             const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `beliefExplorer_567_${date.replace(/\//g, '-')}.txt`;
+            a.download = `beliefExplorer_567_simple_${date.replace(/\//g, '-')}.txt`;
             a.click();
             URL.revokeObjectURL(url);
         }
@@ -326,4 +312,3 @@
     </script>
 </body>
 </html>
-```
