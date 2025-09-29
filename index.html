@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -56,6 +57,11 @@
         .belief-card.disabled {
             opacity: .55;
         }
+        .belief-number {
+            font-weight: bold;
+            color: var(--accent);
+            min-width: 30px;
+        }
         .belief-text {
             flex: 1 1 260px;
             font-weight: 500;
@@ -83,6 +89,12 @@
             font-weight: 600;
             font-size: .9rem;
             color: var(--accent);
+        }
+        .help-text {
+            font-size: 0.75rem;
+            color: var(--muted);
+            margin-top: 0.25rem;
+            width: 100%;
         }
         .actions {
             margin: 1.5rem 0;
@@ -170,7 +182,14 @@
 
     <main>
         <section class="intro" aria-label="Présentation">
-            <p>Cet outil est un questionnaire personnel pour explorer vos croyances. Les données restent stockées localement dans votre navigateur. Aucune information n’est transmise à un serveur.</p>
+            <p>Cet outil est un questionnaire personnel pour explorer vos croyances. Les données restent stockées localement dans votre navigateur. Aucune information n'est transmise à un serveur.</p>
+            <br>
+            <h3>Comment choisir vos réponses ?</h3>
+            <ul>
+                <li><strong>Accord (1-7) :</strong> 1 = pas du tout d'accord, 7 = tout à fait d'accord</li>
+                <li><strong>Certitude (0-100%) :</strong> 0 = vous en êtes totalement incertain(e), 100 = vous en êtes absolument certain(e)</li>
+                <li><strong>Émotion (1-7) :</strong> 1 = cette croyance ne vous procure aucune émotion, 7 = cette croyance vous procure une très forte émotion (positive ou négative)</li>
+            </ul>
         </section>
 
         <form id="beliefForm" aria-label="Croyances">
@@ -178,7 +197,7 @@
 
             <div class="actions">
                 <button type="button" class="primary" id="analyzeBtn">Analyser maintenant</button>
-                <button type="button" class="secondary" id="exportBtn">Exporter JSON</button>
+                <button type="button" class="secondary" id="exportBtn">Exporter rapport TXT pour IA</button>
                 <button type="button" class="danger" id="clearBtn">Effacer mes données</button>
             </div>
         </form>
@@ -190,6 +209,7 @@
                 <table id="resultTable" aria-label="Tableau des résultats">
                     <thead>
                         <tr>
+                            <th data-key="rank">N° ↕</th>
                             <th data-key="text">Croyance ↕</th>
                             <th data-key="agreement">Accord ↕</th>
                             <th data-key="certainty">Certitude ↕</th>
@@ -211,8 +231,8 @@
         /* ===== LISTE DES 100 CROYANCES ===== */
         const BELIEFS = [
             "Il faut travailler dur pour réussir sa vie.",
-            "L’argent fait le bonheur.",
-            "L’échec est une opportunité d’apprentissage.",
+            "L'argent fait le bonheur.",
+            "L'échec est une opportunité d'apprentissage.",
             "Les traditions doivent être respectées.",
             "On ne change pas sa nature profonde.",
             "La santé est plus importante que la richesse.",
@@ -221,34 +241,34 @@
             "Aider les autres est une priorité.",
             "Le bonheur vient des relations humaines.",
             "La famille est le pilier de la vie.",
-            "L’amitié doit être entretenue régulièrement.",
+            "L'amitié doit être entretenue régulièrement.",
             "Les règles sociales sont indispensables à la cohésion.",
-            "L’éducation est la clé de l’émancipation.",
-            "Le respect s’acquiert par l’autorité.",
+            "L'éducation est la clé de l'émancipation.",
+            "Le respect s'acquiert par l'autorité.",
             "Le travail en équipe est plus efficace que le travail solitaire.",
             "Il est normal de se comparer aux autres.",
-            "La réussite professionnelle détermine la valeur d’une personne.",
-            "Les personnes riches ont plus d’influence morale.",
+            "La réussite professionnelle détermine la valeur d'une personne.",
+            "Les personnes riches ont plus d'influence morale.",
             "La politique ne sert à rien.",
             "Chaque vote compte.",
             "Les hommes politiques sont corrompus.",
-            "La liberté d’expression est absolue.",
-            "L’État doit protéger les plus faibles.",
-            "L’impôt est une contrainte juste.",
+            "La liberté d'expression est absolue.",
+            "L'État doit protéger les plus faibles.",
+            "L'impôt est une contrainte juste.",
             "La monogamie est naturelle.",
-            "L’amour véritable dure toute la vie.",
+            "L'amour véritable dure toute la vie.",
             "Le mariage est un engagement sacré.",
             "Les enfants doivent honorer leurs parents.",
             "Les parents doivent tout donner à leurs enfants.",
-            "La discipline est essentielle à l’éducation.",
+            "La discipline est essentielle à l'éducation.",
             "Le numérique rend les gens plus seuls.",
             "La technologie améliore la qualité de vie.",
             "Les réseaux sociaux créent de la dépendance.",
             "La vie sans internet est possible.",
             "La nature doit être préservée à tout prix.",
-            "L’homme est supérieur aux autres espèces.",
-            "Le climat évolue indépendamment de l’humain.",
-            "Chaque geste compte pour l’environnement.",
+            "L'homme est supérieur aux autres espèces.",
+            "Le climat évolue indépendamment de l'humain.",
+            "Chaque geste compte pour l'environnement.",
             "La science explique tout.",
             "La religion apporte du sens.",
             "La spiritualité est personnelle.",
@@ -258,7 +278,7 @@
             "On est maître de son destin.",
             "La chance se provoque.",
             "Le risque est nécessaire pour progresser.",
-            "La sécurité est plus importante que l’aventure.",
+            "La sécurité est plus importante que l'aventure.",
             "Les voyages forment la jeunesse.",
             "Chacun peut apprendre de ses erreurs.",
             "Le pardon libère celui qui pardonne.",
@@ -268,21 +288,21 @@
             "La prison réhabilite.",
             "La peine de mort est inacceptable.",
             "La liberté vaut mieux que la sécurité.",
-            "L’art est un luxe.",
+            "L'art est un luxe.",
             "La culture rapproche les peuples.",
             "Le sport enseigne la discipline.",
-            "La compétition stimule l’excellence.",
+            "La compétition stimule l'excellence.",
             "La coopération est préférable à la compétition.",
-            "L’échec scolaire condamne l’avenir.",
+            "L'échec scolaire condamne l'avenir.",
             "Le diplôme garantit une bonne situation.",
-            "L’intelligence est innée.",
+            "L'intelligence est innée.",
             "On peut devenir plus intelligent.",
-            "La créativité s’apprend.",
+            "La créativité s'apprend.",
             "Les émotions sont des faiblesses.",
             "Montrer ses émotions est un signe de courage.",
             "Les hommes sont plus rationnels que les femmes.",
             "Les femmes sont plus empathiques que les hommes.",
-            "L’égalité hommes-femmes est atteinte.",
+            "L'égalité hommes-femmes est atteinte.",
             "Le féminisme est encore nécessaire.",
             "Les stéréotypes ont un fond de vérité.",
             "Chacun peut changer.",
@@ -290,19 +310,19 @@
             "Il faut vivre avec son temps.",
             "Les anciens ont toujours raison.",
             "Les jeunes comprennent le monde moderne.",
-            "L’âge apporte la sagesse.",
+            "L'âge apporte la sagesse.",
             "La retraite est méritée.",
             "Travailler moins vivra mieux.",
             "La productivité est la clé du progrès.",
             "Le chômage est souvent un choix.",
             "Les pauvres sont responsables de leur situation.",
             "La société doit garantir un revenu minimum.",
-            "L’entrepreneuriat est accessible à tous.",
+            "L'entrepreneuriat est accessible à tous.",
             "Les riches créent des emplois.",
             "La spéculation est nuisible.",
-            "L’investissement est un acte courageux.",
-            "L’argent doit circuler.",
-            "L’épargne est une preuve de responsabilité.",
+            "L'investissement est un acte courageux.",
+            "L'argent doit circuler.",
+            "L'épargne est une preuve de responsabilité.",
             "Le crédit permet de réaliser ses rêves.",
             "La dette est un danger.",
             "Il faut profiter de la vie immédiatement.",
@@ -336,7 +356,7 @@
             }
             renderBeliefs();
             document.getElementById('analyzeBtn').addEventListener('click', analyze);
-            document.getElementById('exportBtn').addEventListener('click', exportJSON);
+            document.getElementById('exportBtn').addEventListener('click', exportTXT);
             document.getElementById('clearBtn').addEventListener('click', clearData);
             document.querySelectorAll('th[data-key]').forEach(th => {
                 th.addEventListener('click', () => sortTable(th.dataset.key));
@@ -358,6 +378,7 @@
                 card.className = 'belief-card';
                 if (!checked) card.classList.add('disabled');
                 card.innerHTML = `
+                    <span class="belief-number">#${idx + 1}</span>
                     <input type="checkbox" id="b${idx}" ${checked} aria-label="Sélectionner cette croyance">
                     <label for="b${idx}" class="belief-text">${text}</label>
                     <div class="controls">
@@ -368,10 +389,12 @@
                         <label>Certitude %</label>
                         <input type="range" min="0" max="100" value="${certainty}" aria-label="Certitude">
                         <output>${certainty}%</output>
+                        <div class="help-text">0% = totalement incertain, 100% = absolument certain</div>
 
                         <label>Émotion 1-7</label>
                         <input type="range" min="1" max="7" value="${emotion}" aria-label="Intensité émotionnelle">
                         <output>${emotion}</output>
+                        <div class="help-text">1 = aucune émotion, 7 = très forte émotion</div>
                     </div>
                 `;
                 const chk = card.querySelector('input[type="checkbox"]');
@@ -425,6 +448,7 @@
                 if (i < 10) tr.classList.add('top10');
                 const bar = `<span class="bar" style="width:${Math.max(4, b.score * 200)}px"></span>`;
                 tr.innerHTML = `
+                    <td>${b.id + 1}</td>
                     <td>${b.text}</td>
                     <td>${b.agreement}</td>
                     <td>${b.certainty}%</td>
@@ -449,13 +473,51 @@
             analyze(); // re-render
         }
 
-        /* ===== EXPORT ===== */
-        function exportJSON() {
-            const blob = new Blob([JSON.stringify(beliefs, null, 2)], { type: 'application/json' });
+        /* ===== EXPORT TXT ===== */
+        function exportTXT() {
+            if (beliefs.length === 0) {
+                alert("Aucune donnée à exporter.");
+                return;
+            }
+            
+            const top10 = [...beliefs].sort((a, b) => b.score - a.score).slice(0, 10);
+            const date = new Date().toLocaleDateString('fr-FR');
+            
+            let content = `BELIEFEXPLORER - RAPPORT DE CROYANCES PERSONNELLES\n`;
+            content += `Date: ${date}\n`;
+            content += `Nombre total de croyances évaluées: ${beliefs.length}\n\n`;
+            
+            content += `=== MES 10 CROYANCES LES PLUS IMPORTANTES ===\n\n`;
+            top10.forEach((b, i) => {
+                content += `${i + 1}. ${b.text}\n`;
+                content += `   N°${b.id + 1} | Accord: ${b.agreement}/7 | Certitude: ${b.certainty}% | Émotion: ${b.emotion}/7\n`;
+                content += `   Score d'importance: ${b.score}/1.00\n\n`;
+            });
+            
+            content += `=== PROMPT POUR IA ===\n\n`;
+            content += `En tant qu'assistant spécialisé en développement personnel et psychologie, analyse le profil de croyances suivant :\n\n`;
+            content += `1. IDENTIFICATION DES CROYANCES LIMITANTES :\n`;
+            content += `Parmi les 10 croyances ci-dessus, identifie celles qui pourraient être limitantes ou sources de blocages.\n\n`;
+            content += `2. PATTERNS ET THÈMES RÉCURRENTS :\n`;
+            content += `Dégage les thèmes principaux (travail, argent, relations, etc.) et les patterns de pensée dominants.\n\n`;
+            content += `3. RECOMMANDATIONS PERSONNELLES :\n`;
+            content += `Suggère 3-5 exercices ou réflexions pour transformer les croyances limitantes en croyances aidantes.\n\n`;
+            content += `4. QUESTIONS DE RÉFLEXION :\n`;
+            content += `Propose 5 questions puissantes pour approfondir l'exploration de ces croyances.\n\n`;
+            content += `=== DONNÉES COMPLÈTES ===\n\n`;
+            content += `Format: N° | Croyance | Accord | Certitude | Émotion | Score\n`;
+            content += `-`.repeat(80) + `\n`;
+            
+            const allSorted = [...beliefs].sort((a, b) => b.score - a.score);
+            allSorted.forEach(b => {
+                content += `${b.id + 1} | "${b.text}" | ${b.agreement} | ${b.certainty}% | ${b.emotion} | ${b.score}\n`;
+            });
+            
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'beliefExplorer_donnees.json';
+            a.download = `beliefExplorer_rapport_${date.replace(/\//g, '-')}.txt`;
             a.click();
             URL.revokeObjectURL(url);
         }
@@ -474,3 +536,4 @@
     </script>
 </body>
 </html>
+```
