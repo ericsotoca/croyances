@@ -1,314 +1,261 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title>BeliefExplorer – Ennéagramme Types 5-6-7</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>
-        :root{--accent:#0066cc;--accent-light:#4d94ff;--bg:#f7f9fc;--card:#fff;--text:#222;--muted:#666;--border:#e1e4e8;--danger:#dc3545;--bar:#ffcc00;}
-        body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.55;}
-        header,main,footer{max-width:960px;margin:auto;padding:1.2rem 1rem;}
-        h1{font-size:1.8rem;margin:0 0 .5rem;color:var(--accent);}
-        .intro{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;margin-bottom:1.5rem;font-size:.95rem;}
-        .belief-card{display:flex;flex-wrap:wrap;gap:.8rem;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1rem;margin-bottom:.75rem;}
-        .belief-card.disabled{opacity:.55;}
-        .belief-number{font-weight:bold;color:var(--accent);min-width:30px}
-        .belief-text{flex:1 1 260px;font-weight:500;}
-        .controls{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;}
-        .controls label{font-size:.8rem;color:var(--muted);margin-right:.3rem;}
-        .controls input[type=range]{width:100px;}
-        .controls output{min-width:38px;font-weight:600;font-size:.9rem;color:var(--accent);}
-        .actions{margin:1.5rem 0;display:flex;flex-wrap:wrap;gap:.8rem;}
-        button{border:none;border-radius:6px;padding:.6rem 1.1rem;font-size:1rem;cursor:pointer;transition:background .2s;}
-        .primary{background:var(--accent);color:#fff;}
-        .primary:hover{background:var(--accent-light);}
-        .secondary{background:var(--border);color:var(--text);}
-        .secondary:hover{background:#d0d7de;}
-        .danger{background:var(--danger);color:#fff;}
-        .danger:hover{background:#c82333;}
-        #results{margin-top:2rem;}
-        table{width:100%;border-collapse:collapse;font-size:.9rem;}
-        th,td{padding:.55rem .5rem;border:1px solid var(--border);text-align:left;}
-        th{background:var(--bg);cursor:pointer;user-select:none;}
-        th:hover{background:#e9ecef;}
-        tr.top10{background:#fffbe6;}
-        .bar{display:inline-block;height:10px;background:var(--bar);border-radius:2px;margin-left:6px;}
-        @media (max-width:600px){.belief-card{flex-direction:column;align-items:flex-start;}.controls{width:100%;justify-content:space-between;}}
-    </style>
+<meta charset="UTF-8">
+<title>BeliefExplorer – Croyances Limitantes (Types 5-6-7)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root{--accent:#0066cc;--accent-light:#4d94ff;--bg:#f7f9fc;--card:#fff;--text:#222;--muted:#666;--border:#e1e4e8;--danger:#dc3545;--bar:#ffcc00;}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.55;}
+header,main,footer{max-width:960px;margin:auto;padding:1.2rem 1rem;}
+h1{font-size:1.8rem;margin:0 0 .5rem;color:var(--accent);}
+.intro{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;margin-bottom:1.5rem;font-size:.95rem;}
+.belief-card{display:flex;flex-wrap:wrap;gap:.8rem;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1rem;margin-bottom:.75rem;}
+.belief-card.disabled{opacity:.55;}
+.belief-number{font-weight:bold;color:var(--accent);min-width:30px}
+.belief-text{flex:1 1 260px;font-weight:500;}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;}
+.controls label{font-size:.8rem;color:var(--muted);margin-right:.3rem;}
+.controls input[type=range]{width:100px;}
+.controls output{min-width:38px;font-weight:600;font-size:.9rem;color:var(--accent);}
+.actions{margin:1.5rem 0;display:flex;flex-wrap:wrap;gap:.8rem;}
+button{border:none;border-radius:6px;padding:.6rem 1.1rem;font-size:1rem;cursor:pointer;transition:background .2s;}
+.primary{background:var(--accent);color:#fff;}
+.primary:hover{background:var(--accent-light);}
+.secondary{background:var(--border);color:var(--text);}
+.secondary:hover{background:#d0d7de;}
+.danger{background:var(--danger);color:#fff;}
+.danger:hover{background:#c82333;}
+#results{margin-top:2rem;}
+table{width:100%;border-collapse:collapse;font-size:.9rem;}
+th,td{padding:.55rem .5rem;border:1px solid var(--border);text-align:left;}
+th{background:var(--bg);cursor:pointer;user-select:none;}
+th:hover{background:#e9ecef;}
+tr.top10{background:#fffbe6;}
+.bar{display:inline-block;height:10px;background:var(--bar);border-radius:2px;margin-left:6px;}
+@media (max-width:600px){.belief-card{flex-direction:column;align-items:flex-start;}.controls{width:100%;justify-content:space-between;}}
+</style>
 </head>
 <body>
-    <header>
-        <h1>BeliefExplorer – Ennéagramme Types 5-6-7</h1>
-        <p>Explorez les croyances propres aux profils 5 (Observateur), 6 (Loyal) et 7 (Enthousiaste)</p>
-    </header>
+<header>
+<h1>BeliefExplorer – Croyances Limitantes</h1>
+<p>Explorez les croyances limitantes des profils 5 (Observateur), 6 (Loyal) et 7 (Enthousiaste)</p>
+</header>
+code
+Code
+<main>
+    <section class="intro" aria-label="Présentation">
+        <p>Cet outil explore les croyances limitantes typiques des types 5, 6 et 7 de l'ennéagramme. Votre évaluation reste stockée localement dans votre navigateur.</p>
+        <h3>Guide de l'échelle</h3>
+        <ul>
+            <li><strong>Accord 1-7 :</strong> 1 = pas du tout d'accord, 7 = tout à fait d'accord</li>
+        </ul>
+    </section>
 
-    <main>
-        <section class="intro" aria-label="Présentation">
-            <p>Cet outil explore les croyances typiques des types 5, 6 et 7 de l'ennéagramme. Les données restent stockées localement.</p>
-            <h3>Guide de l'échelle</h3>
-            <ul>
-                <li><strong>Accord 1-7 :</strong> 1 = pas du tout d'accord, 7 = tout à fait d'accord</li>
-            </ul>
-        </section>
+    <form id="beliefForm" aria-label="Croyances">
+        <div id="beliefList" role="group" aria-label="Liste des croyances"></div>
 
-        <form id="beliefForm" aria-label="Croyances">
-            <div id="beliefList" role="group" aria-label="Liste des croyances"></div>
+        <div class="actions">
+            <button type="button" class="primary" id="analyzeBtn">Analyser mes croyances</button>
+            <button type="button" class="secondary" id="exportBtn">Exporter rapport TXT pour IA</button>
+            <button type="button" class="danger" id="clearBtn">Effacer mes données</button>
+        </div>
+    </form>
 
-            <div class="actions">
-                <button type="button" class="primary" id="analyzeBtn">Analyser maintenant</button>
-                <button type="button" class="secondary" id="exportBtn">Exporter rapport TXT pour IA</button>
-                <button type="button" class="danger" id="clearBtn">Effacer mes données</button>
-            </div>
-        </form>
+    <section id="results" aria-label="Résultats" hidden>
+        <h2>Résultats</h2>
+        <table id="resultTable" aria-label="Tableau des résultats">
+            <thead>
+                <tr>
+                    <th data-key="rank">N° ↕</th>
+                    <th data-key="text">Croyance Limitante ↕</th>
+                    <th data-key="agreement">Accord ↕</th>
+                    <th data-key="score">Score ↕</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </section>
+</main>
 
-        <section id="results" aria-label="Résultats" hidden>
-            <h2>Résultats</h2>
-            <table id="resultTable" aria-label="Tableau des résultats">
-                <thead>
-                    <tr>
-                        <th data-key="rank">N° ↕</th>
-                        <th data-key="text">Croyance ↕</th>
-                        <th data-key="agreement">Accord ↕</th>
-                        <th data-key="score">Importance ↕</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </section>
-    </main>
+<footer style="text-align:center;font-size:.8rem;color:var(--muted);padding:2rem 1rem;">
+    BeliefExplorer – 2025 – Code open-source (CC0)
+</footer>
 
-    <footer style="text-align:center;font-size:.8rem;color:var(--muted);padding:2rem 1rem;">
-        BeliefExplorer – 2025 – Code open-source (CC0)
-    </footer>
+<script>
+    /* ===== CROYANCES LIMITANTES SPÉCIFIQUES TYPES 5-6-7 ===== */
+    const BELIEFS=[
+        // Type 5 – L'Observateur (Peur de l'incompétence et de l'envahissement)
+        "Je dois tout comprendre avant de pouvoir agir en sécurité.",
+        "Le monde extérieur est intrusif et exige trop de mes ressources.",
+        "Je n'en sais pas encore assez pour passer à l'action.",
+        "Demander de l'aide révèle mon incompétence.",
+        "Je ne dois surtout pas gaspiller mon temps et mon énergie.",
+        "Les émotions sont irrationnelles et peuvent obscurcir mon jugement.",
+        "Je suis plus en sécurité en observant à distance qu'en participant.",
+        "Je crains d'être envahi ou vidé par les attentes des autres.",
+        "Je n'ai pas les compétences nécessaires pour faire face au monde.",
+        "Me retirer du monde est la seule façon de préserver mon intégrité.",
+        "Être invisible est la meilleure des protections.",
+        "Je crains de me sentir vide et sans ressources à l'intérieur.",
+        "Je ne peux pas faire confiance à mon entourage pour respecter mes limites.",
 
-    <script>
-        /* ===== 100 CROYANCES TYPES 5-6-7 ===== */
-        const BELIEFS=[
-            // Type 5 – Observateur / Chercheur de savoir
-            "Je dois comprendre avant d'agir.",
-            "Le savoir est plus sûr que l'action.",
-            "Les émotions peuvent nuire à la lucidité.",
-            "J'ai besoin de me retirer pour recharger mes batteries.",
-            "Le monde exige trop de moi.",
-            "Autonomie intellectuelle avant tout.",
-            "Je ne dois pas gaspiller mes ressources.",
-            "La solitude est propice à la réflexion.",
-            "Demander de l'aide est un signe de faiblesse.",
-            "Je préfère observer que participer.",
-            "Trop de contact affaiblit mon énergie.",
-            "Je dois maîtriser mon sujet avant de parler.",
-            "Les autres veulent trop de mon temps.",
-            "La distance me protège de l'intrusion.",
-            "Je n'ai pas assez de données pour décider.",
-            "Être invisible, c'est être en sécurité.",
-            "Je stocke l'information comme une réserve.",
-            "Comprendre, c'est contrôler.",
-            "Je crains l'envahissement émotionnel.",
-            "Mon espace est sacré.",
-            "Je n'ai pas le droit d'être ignorant.",
-            "La curiosité justifie l'isolement.",
-            "Je pense, donc je suis... en sécurité.",
-            "Les interactions sociales me coûtent.",
-            "Je dois préserver mon énergie mentale.",
-            "Rien ne vaut la pensée objective.",
-            "Je n'aime pas qu'on s'introduise dans ma tête.",
-            "Je me déshabille mentalement, pas émotionnellement.",
-            "Le silence est une source de savoir.",
-            "Je crains d'être dépassé par les événements.",
-            "Je n'ai pas assez de compétences pour ce monde.",
-            "Je prépare un savoir futur utile.",
-            "Je n'ai pas besoin de grand-chose pour vivre.",
-            "Je fonctionne en systèmes fermés.",
-            "Je me méfie des demandes non formulées.",
+        // Type 6 – Le Loyal (Peur de manquer de soutien et d'être sans guide)
+        "Le monde est un endroit dangereux et imprévisible.",
+        "Je ne peux pas me faire confiance, j'ai besoin d'un avis extérieur.",
+        "Il faut anticiper le pire pour ne pas être pris au dépourvu.",
+        "Sans règles ou autorité claire, c'est le chaos.",
+        "Je dois tester la loyauté des autres en permanence.",
+        "Je suis incapable de me débrouiller seul face aux dangers.",
+        "Je crains la trahison et l'abandon par-dessus tout.",
+        "Faire une erreur pourrait avoir des conséquences catastrophiques.",
+        "Le doute est la preuve de mon intelligence, mais il me paralyse.",
+        "Je suis constamment en alerte, à la recherche de menaces potentielles.",
+        "Je me sens anxieux si je n'ai pas de plan B, C, et D.",
+        "Soit je me soumets à l'autorité pour être en sécurité, soit je la défie pour ne pas être contrôlé.",
+        "Les autres vont forcément finir par me décevoir ou me laisser tomber.",
 
-            // Type 6 – Loyal / Questionneur
-            "Il faut s'assurer avant de se lancer.",
-            "Méfiance est mère de sûreté.",
-            "Je cherche l'autorité digne de confiance.",
-            "Je teste constamment la loyauté des autres.",
-            "Le pire est toujours possible.",
-            "Je dois anticiper les problèmes.",
-            "Sans structure, il y a chaos.",
-            "Je crains de me tromper de camp.",
-            "Je veux être sûr de ma décision.",
-            "Je cherche des preuves de fiabilité.",
-            "Je me rebelle quand je me sens piégé.",
-            "Je me soumets quand la confiance est acquise.",
-            "Je n'ai pas assez d'infos pour sécuriser.",
-            "Je dois me protéger des imprévus.",
-            "Je doute donc j'existe.",
-            "Je cherche un garant externe.",
-            "Je crains l'abandon du groupe.",
-            "Je préfère le diable connu.",
-            "Je pose des questions pièges.",
-            "Je cherche l'appui d'une procédure.",
-            "Je me sens seul face aux dangers.",
-            "Je dois honorer mes engagements.",
-            "Je cherche la faille avant l'ouverture.",
-            "Je n'ai pas le droit à l'erreur.",
-            "Je crains les réactions imprévisibles.",
-            "Je veux être irréprochable.",
-            "Je cherche l'approbation silencieuse.",
-            "Je dois faire face à mes peurs.",
-            "Je me méfie des promesses trop belles.",
-            "Je prépare des plans B, C, D...",
-            "Je cherche l'appartenance sécurisante.",
-            "Je n'avance pas sans feu vert.",
-            "Je me sens responsable du groupe.",
-            "Je crains la trahison.",
-            "Je veux un monde prévisible.",
+        // Type 7 – L'Enthousiaste (Peur de la souffrance et du manque)
+        "Je dois à tout prix éviter la douleur et les émotions négatives.",
+        "Être limité ou contraint est insupportable.",
+        "Je dois garder toutes mes options ouvertes pour ne rien rater.",
+        "Si je m'arrête, je risque d'être rattrapé par l'ennui ou la tristesse.",
+        "Je ne devrais pas avoir à ressentir des sentiments désagréables.",
+        "La vie ne devrait être que plaisir, enthousiasme et nouveauté.",
+        "L'engagement est un piège qui limite ma liberté.",
+        "Je peux toujours rationaliser une expérience négative pour la rendre positive.",
+        "Je fuis les conflits en me réfugiant dans la planification ou l'humour.",
+        "La routine est l'ennemie de la joie de vivre.",
+        "Je suis insatiable, j'ai peur de manquer quelque chose d'essentiel.",
+        "Rester dans le futur et les possibilités me protège de l'inconfort du présent.",
+        "Je n'ai pas le droit d'être triste ou de mauvaise humeur."
+    ];
 
-            // Type 7 – Enthousiaste / Évadé
-            "La vie est un buffet d'expériences.",
-            "Il ne faut pas se limiter.",
-            "Je peux tout faire... en même temps.",
-            "La liberté de choix est sacrée.",
-            "Je fuie la douleur par l'enthousiasme.",
-            "Demain sera meilleur.",
-            "Je dois garder toutes les portes ouvertes.",
-            "Je m'ennuie vite.",
-            "Je mérite le plaisir maintenant.",
-            "Je peux contourner les obstacles.",
-            "Je n'aime pas les contraintes de temps.",
-            "Je préfère les options aux obligations.",
-            "Je rationalise les échecs en opportunités.",
-            "Je n'ai pas le droit de rater ma vie.",
-            "Je multiplie les projets pour ne pas manquer.",
-            "Je détourne l'attention du négatif.",
-            "Je veux profiter de tout de suite.",
-            "Je fuis l'ennui comme la peste.",
-            "Je suis insatiable de nouveauté.",
-            "Je rationalise les conflits en jeux.",
-            "Je n'aime pas les adieux définitifs.",
-            "Je planifie pour ne pas être pris au piège.",
-            "Je veux être partout où il se passe quelque chose.",
-            "Je n'ai pas le droit d'être triste.",
-            "Je transforme l'obstacle en défi ludique.",
-            "Je préfère l'idée à la réalité contraignante.",
-            "Je fuis la dépendance émotionnelle.",
-            "Je veux être vu comme source de possibles.",
-            "Je rationalise la douleur en leçon positive.",
-            "Je n'aime pas les gens qui rabâchent le négatif.",
-            "Je veux goûter à tous les plats du menu.",
-            "Je fuis la routine qui étouffe.",
-            "Je mérite le meilleur des mondes.",
-            "Je transforme l'ennui en projet créatif."
-        ];
+    /* ===== STATE ===== */
+    let beliefs = [];
+    let sortState = { key: 'score', asc: false };
 
-        /* ===== STATE ===== */
-        let beliefs = [];
-        let sortState = { key: 'score', asc: false };
-
-        /* ===== INIT / RENDER / SAVE ===== */
-        function init() {
-            const stored = localStorage.getItem('beliefExplorer567');
-            if (stored) { try { beliefs = JSON.parse(stored); } catch (e) { beliefs = []; } }
-            renderBeliefs();
-            document.getElementById('analyzeBtn').addEventListener('click', analyze);
-            document.getElementById('exportBtn').addEventListener('click', exportTXT);
-            document.getElementById('clearBtn').addEventListener('click', clearData);
-            document.querySelectorAll('th[data-key]').forEach(th => th.addEventListener('click', () => sortTable(th.dataset.key)));
+    /* ===== INIT / RENDER / SAVE ===== */
+    function init() {
+        const stored = localStorage.getItem('beliefExplorer567_lim');
+        if (stored) { try { beliefs = JSON.parse(stored); } catch (e) { beliefs = []; } }
+        renderBeliefs();
+        document.getElementById('analyzeBtn').addEventListener('click', analyze);
+        document.getElementById('exportBtn').addEventListener('click', exportTXT);
+        document.getElementById('clearBtn').addEventListener('click', clearData);
+        document.querySelectorAll('th[data-key]').forEach(th => th.addEventListener('click', () => sortTable(th.dataset.key)));
+    }
+    function renderBeliefs() {
+        const container = document.getElementById('beliefList');
+        container.innerHTML = '';
+        BELIEFS.forEach((text, idx) => {
+            const existing = beliefs.find(b => b.id === idx);
+            const checked = existing ? 'checked' : '';
+            const agreement = existing ? existing.agreement : 4;
+            const card = document.createElement('div');
+            card.className = 'belief-card'; if (!checked) card.classList.add('disabled');
+            card.innerHTML = `
+                <span class="belief-number">#${idx+1}</span>
+                <input type="checkbox" id="b${idx}" ${checked} aria-label="Sélectionner cette croyance">
+                <label for="b${idx}" class="belief-text">${text}</label>
+                <div class="controls">
+                    <label>Accord 1-7</label>
+                    <input type="range" min="1" max="7" value="${agreement}" aria-label="Accord">
+                    <output>${agreement}</output>
+                </div>
+            `;
+            const chk = card.querySelector('input[type="checkbox"]');
+            chk.addEventListener('change', () => { card.classList.toggle('disabled', !chk.checked); saveBelief(idx, text, chk.checked, card); });
+            const slider = card.querySelector('input[type="range"]');
+            slider.addEventListener('input', () => { slider.nextElementSibling.textContent = slider.value; if (chk.checked) saveBelief(idx, text, true, card); });
+            container.appendChild(card);
+        });
+    }
+    function saveBelief(id, text, selected, card) {
+        const others = beliefs.filter(b => b.id !== id);
+        if (selected) {
+            const agreement = parseInt(card.querySelector('input[type="range"]').value);
+            const score = (agreement - 1) / 6;  // normalisation 0-1
+            others.push({ id, text, agreement, score });
         }
-        function renderBeliefs() {
-            const container = document.getElementById('beliefList');
-            container.innerHTML = '';
-            BELIEFS.forEach((text, idx) => {
-                const existing = beliefs.find(b => b.id === idx);
-                const checked = existing ? 'checked' : '';
-                const agreement = existing ? existing.agreement : 4;
-                const card = document.createElement('div');
-                card.className = 'belief-card'; if (!checked) card.classList.add('disabled');
-                card.innerHTML = `
-                    <span class="belief-number">#${idx+1}</span>
-                    <input type="checkbox" id="b${idx}" ${checked} aria-label="Sélectionner cette croyance">
-                    <label for="b${idx}" class="belief-text">${text}</label>
-                    <div class="controls">
-                        <label>Accord 1-7</label>
-                        <input type="range" min="1" max="7" value="${agreement}" aria-label="Accord">
-                        <output>${agreement}</output>
-                    </div>
-                `;
-                const chk = card.querySelector('input[type="checkbox"]');
-                chk.addEventListener('change', () => { card.classList.toggle('disabled', !chk.checked); saveBelief(idx, text, chk.checked, card); });
-                const slider = card.querySelector('input[type="range"]');
-                slider.addEventListener('input', () => { slider.nextElementSibling.textContent = slider.value; if (chk.checked) saveBelief(idx, text, true, card); });
-                container.appendChild(card);
-            });
-        }
-        function saveBelief(id, text, selected, card) {
-            const others = beliefs.filter(b => b.id !== id);
-            if (selected) {
-                const agreement = parseInt(card.querySelector('input[type="range"]').value);
-                const score = (agreement - 1) / 6;  // simple normalisation 0-1
-                others.push({ id, text, agreement, score });
-            }
-            beliefs = others;
-            localStorage.setItem('beliefExplorer567', JSON.stringify(beliefs));
-        }
+        beliefs = others;
+        localStorage.setItem('beliefExplorer567_lim', JSON.stringify(beliefs));
+    }
 
-        /* ===== ANALYZE ===== */
-        function analyze() {
-            if (beliefs.length === 0) { alert("Veuillez sélectionner au moins une croyance."); return; }
-            const tbody = document.querySelector('#resultTable tbody');
-            tbody.innerHTML = '';
-            const sorted = [...beliefs].sort((a, b) => b.score - a.score);
-            sorted.forEach((b, i) => {
-                const tr = document.createElement('tr');
-                if (i < 10) tr.classList.add('top10');
-                const bar = `<span class="bar" style="width:${Math.max(4, b.score * 200)}px"></span>`;
-                tr.innerHTML = `<td>${b.id+1}</td><td>${b.text}</td><td>${b.agreement}</td><td>${b.score.toFixed(2)}${bar}</td>`;
-                tbody.appendChild(tr);
-            });
-            document.getElementById('results').hidden = false;
-            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
-        }
+    /* ===== ANALYZE ===== */
+    function analyze() {
+        if (beliefs.length === 0) { alert("Veuillez sélectionner et évaluer au moins une croyance."); return; }
+        const tbody = document.querySelector('#resultTable tbody');
+        tbody.innerHTML = '';
+        const sorted = [...beliefs].sort((a, b) => b.score - a.score);
+        sorted.forEach((b, i) => {
+            const tr = document.createElement('tr');
+            if (i < 10) tr.classList.add('top10');
+            const bar = `<span class="bar" style="width:${Math.max(4, b.score * 200)}px"></span>`;
+            tr.innerHTML = `<td>${b.id+1}</td><td>${b.text}</td><td>${b.agreement}</td><td>${b.score.toFixed(2)}${bar}</td>`;
+            tbody.appendChild(tr);
+        });
+        document.getElementById('results').hidden = false;
+        document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+    }
 
-        /* ===== SORT ===== */
-        function sortTable(key) {
-            if (sortState.key === key) sortState.asc = !sortState.asc;
-            else { sortState.key = key; sortState.asc = false; }
-            beliefs.sort((a, b) => {
-                const va = a[key], vb = b[key];
-                const res = (typeof va === 'string' ? va.localeCompare(vb) : va - vb);
-                return sortState.asc ? res : -res;
-            });
-            analyze();
-        }
+    /* ===== SORT ===== */
+    function sortTable(key) {
+        if (sortState.key === key) sortState.asc = !sortState.asc;
+        else { sortState.key = key; sortState.asc = false; }
+        let sortedBeliefs = [...beliefs]; // Create a copy to sort
+        sortedBeliefs.sort((a, b) => {
+            const va = a[key], vb = b[key];
+            const res = (typeof va === 'string' ? va.localeCompare(vb) : va - vb);
+            return sortState.asc ? res : -res;
+        });
+        
+        const tbody = document.querySelector('#resultTable tbody');
+        tbody.innerHTML = ''; // Clear existing table
+        sortedBeliefs.forEach((b, i) => {
+            const tr = document.createElement('tr');
+             if (i < 10 && key === 'score' && !sortState.asc) tr.classList.add('top10');
+            const bar = `<span class="bar" style="width:${Math.max(4, b.score * 200)}px"></span>`;
+            tr.innerHTML = `<td>${b.id+1}</td><td>${b.text}</td><td>${b.agreement}</td><td>${b.score.toFixed(2)}${bar}</td>`;
+            tbody.appendChild(tr);
+        });
+    }
 
-        /* ===== EXPORT TXT ===== */
-        function exportTXT() {
-            if (beliefs.length === 0) { alert("Aucune donnée à exporter."); return; }
-            const top10 = [...beliefs].sort((a, b) => b.score - a.score).slice(0, 10);
-            const date = new Date().toLocaleDateString('fr-FR');
-            let content = `BELIEFEXPLORER - RAPPORT ENNÉAGRAMME 5-6-7 (Accord simple)\nDate: ${date}\nNombre total de croyances évaluées: ${beliefs.length}\n\n=== MES 10 CROYANCES LES PLUS IMPORTANTES (Types 5-6-7) ===\n\n`;
-            top10.forEach((b, i) => {
-                content += `${i+1}. ${b.text}\n   N°${b.id+1} | Accord: ${b.agreement}/7 | Score normalisé: ${b.score.toFixed(2)}/1.00\n\n`;
-            });
-            content += `=== PROMPT POUR IA SPÉCIALISÉE ENNÉAGRAMME ===\n\nEn tant qu'expert en ennéagramme, analyse le profil de croyances ci-dessus en te concentrant sur les types 5 (Observateur), 6 (Loyal) et 7 (Enthousiaste) :\n\n1. TYPE DOMINANT & FIXATIONS :\nIdentifie le type dominant et les croyances limitantes spécifiques.\n\n2. PATTERNS DE PEUR :\nDégage les peurs fondamentales (peur de l'envahissement, peur de l'abandon, peur de la douleur).\n\n3. RECOMMANDATIONS SPÉCIFIQUES PAR TYPE :\n- Type 5 : Comment passer de l'observation à l'action ?\n- Type 6 : Comment développer la confiance intérieure ?\n- Type 7 : Comment rester présent aux émotions difficiles ?\n\n4. QUESTIONS DE RÉFLEXION TYPÉES :\nPropose 2 questions puissantes pour chaque type actif.\n\n=== DONNÉES COMPLÈTES ===\nFormat: N° | Croyance | Accord/7 | Score normalisé\n${'-'.repeat(60)}\n`;
-            const allSorted = [...beliefs].sort((a, b) => b.score - a.score);
-            allSorted.forEach(b => {
-                content += `${b.id+1} | "${b.text}" | ${b.agreement}/7 | ${b.score.toFixed(2)}\n`;
-            });
-            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `beliefExplorer_567_simple_${date.replace(/\//g, '-')}.txt`;
-            a.click();
-            URL.revokeObjectURL(url);
-        }
+    /* ===== EXPORT TXT ===== */
+    function exportTXT() {
+        if (beliefs.length === 0) { alert("Aucune donnée à exporter."); return; }
+        const top10 = [...beliefs].sort((a, b) => b.score - a.score).slice(0, 10);
+        const date = new Date().toLocaleDateString('fr-FR');
+        let content = `RAPPORT CROYANCES LIMITANTES - ENNÉAGRAMME 5-6-7\nDate: ${date}\nNombre de croyances évaluées: ${beliefs.length}\n\n=== MES 10 CROYANCES LIMITANTES LES PLUS FORTES (Types 5-6-7) ===\n\n`;
+        top10.forEach((b, i) => {
+            content += `${i+1}. ${b.text}\n   N°${b.id+1} | Accord: ${b.agreement}/7 | Score: ${b.score.toFixed(2)}/1.00\n\n`;
+        });
+        content += `=== PROMPT POUR IA SPÉCIALISÉE ENNÉAGRAMME ===\n\nEn tant qu'expert en ennéagramme, analyse ces croyances limitantes (types 5, 6, 7) :\n\n1. DIAGNOSTIC DU TYPE DOMINANT : Quel type (5, 6, ou 7) semble le plus prédominant et pourquoi ? Identifie les 2-3 croyances qui le démontrent le plus clairement.\n\n2. PEURS FONDAMENTALES : Quelles sont les peurs racines qui émergent ? (Peur de l'incompétence/envahissement pour le 5, peur du manque de soutien pour le 6, peur de la souffrance/du manque pour le 7).\n\n3. AXES DE TRANSFORMATION :\n   - Pour le 5 : Comment puis-je passer de la collecte de savoir à l'expérimentation dans le réel ?\n   - Pour le 6 : Comment puis-je développer ma confiance en mon propre jugement intérieur ?\n   - Pour le 7 : Comment puis-je m'autoriser à rester présent face à l'inconfort sans fuir ?\n\n4. QUESTIONS DE COACHING PUISSANTES : Propose une question percutante pour chacune des 3 croyances les plus fortes afin de les remettre en question.\n\n=== DONNÉES COMPLÈTES ===\nFormat: N° | Croyance | Accord/7 | Score\n${'-'.repeat(60)}\n`;
+        const allSorted = [...beliefs].sort((a, b) => b.score - a.score);
+        allSorted.forEach(b => {
+            content += `${b.id+1} | "${b.text}" | ${b.agreement}/7 | ${b.score.toFixed(2)}\n`;
+        });
+        const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Croyances_Limitantes_567_${date.replace(/\//g, '-')}.txt`;
+        a.click();
+        URL.revokeObjectURL(url);
+    }
 
-        /* ===== CLEAR ===== */
-        function clearData() {
-            if (!confirm("Supprimer toutes vos données locales ?")) return;
-            localStorage.removeItem('beliefExplorer567');
-            beliefs = [];
-            renderBeliefs();
-            document.getElementById('results').hidden = true;
-        }
+    /* ===== CLEAR ===== */
+    function clearData() {
+        if (!confirm("Voulez-vous vraiment supprimer toutes vos données ? Cette action est irréversible.")) return;
+        localStorage.removeItem('beliefExplorer567_lim');
+        beliefs = [];
+        document.getElementById('beliefForm').reset();
+        renderBeliefs();
+        document.getElementById('results').hidden = true;
+    }
 
-        /* ===== GO ===== */
-        init();
-    </script>
+    /* ===== GO ===== */
+    document.addEventListener('DOMContentLoaded', init);
+</script>
 </body>
 </html>
