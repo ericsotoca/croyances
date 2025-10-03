@@ -1,14 +1,33 @@
+Bien sûr, voici le code modifié.
+
+J'ai apporté les changements suivants :
+1.  **Enrichissement des données :** La liste des croyances a été transformée en une structure de données plus riche qui inclut désormais pour chaque croyance limitante :
+    *   Une **croyance aidante** correspondante.
+    *   Une **piste de transformation** (explication concise).
+2.  **Refonte des résultats :** La section des résultats a été entièrement repensée. Au lieu d'un simple tableau, l'analyse affiche désormais des "cartes" détaillées pour chaque croyance évaluée.
+3.  **Présentation claire :** Chaque carte de résultat met en évidence :
+    *   La croyance limitante et votre score.
+    *   La croyance aidante suggérée pour la remplacer.
+    *   Une explication pour vous aider à intégrer cette nouvelle perspective.
+4.  **Amélioration de l'interface :** Le tri par colonne a été retiré au profit d'une présentation plus lisible et orientée vers l'action, où les croyances les plus fortes apparaissent en premier.
+
+Copiez et collez l'intégralité du code ci-dessous dans un fichier `.html` pour l'utiliser.
+
+---
+
+```html
 <!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>BeliefExplorer – Croyances Limitantes (Types 5-6-7)</title>
+<title>BeliefExplorer – Croyances Limitantes & Aidantes (5-6-7)</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-:root{--accent:#0066cc;--accent-light:#4d94ff;--bg:#f7f9fc;--card:#fff;--text:#222;--muted:#666;--border:#e1e4e8;--danger:#dc3545;--bar:#ffcc00;}
+:root{--accent:#0066cc;--accent-light:#4d94ff;--bg:#f7f9fc;--card:#fff;--text:#222;--muted:#666;--border:#e1e4e8;--danger:#dc3545;--success:#28a745;--bar:#ffcc00;}
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.55;}
 header,main,footer{max-width:960px;margin:auto;padding:1.2rem 1rem;}
 h1{font-size:1.8rem;margin:0 0 .5rem;color:var(--accent);}
+h2{border-bottom:2px solid var(--border);padding-bottom:.4rem;margin-top:2.5rem;}
 .intro{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;margin-bottom:1.5rem;font-size:.95rem;}
 .belief-card{display:flex;flex-wrap:wrap;gap:.8rem;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1rem;margin-bottom:.75rem;}
 .belief-card.disabled{opacity:.55;}
@@ -27,54 +46,39 @@ button{border:none;border-radius:6px;padding:.6rem 1.1rem;font-size:1rem;cursor:
 .danger{background:var(--danger);color:#fff;}
 .danger:hover{background:#c82333;}
 #results{margin-top:2rem;}
-table{width:100%;border-collapse:collapse;font-size:.9rem;}
-th,td{padding:.55rem .5rem;border:1px solid var(--border);text-align:left;}
-th{background:var(--bg);cursor:pointer;user-select:none;}
-th:hover{background:#e9ecef;}
-tr.top10{background:#fffbe6;}
-.bar{display:inline-block;height:10px;background:var(--bar);border-radius:2px;margin-left:6px;}
+.result-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1.2rem;margin-bottom:1rem;}
+.result-card.top10{border-left:4px solid var(--accent);}
+.result-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.8rem;}
+.result-header h3{font-size:1.1rem;margin:0;flex:1;}
+.result-score{font-weight:bold;color:var(--accent);font-size:1.1rem;}
+.belief-transform{margin-top:.8rem;padding-top:.8rem;border-top:1px dashed var(--border);}
+.belief-aidante{color:var(--success);font-weight:bold;}
+.belief-explication{font-size:.9rem;color:var(--muted);margin-top:.4rem;}
 @media (max-width:600px){.belief-card{flex-direction:column;align-items:flex-start;}.controls{width:100%;justify-content:space-between;}}
 </style>
 </head>
 <body>
 <header>
-<h1>BeliefExplorer – Croyances Limitantes</h1>
-<p>Explorez les croyances limitantes des profils 5 (Observateur), 6 (Loyal) et 7 (Enthousiaste)</p>
+<h1>BeliefExplorer – Croyances Limitantes & Aidantes</h1>
+<p>Explorez les croyances des profils 5 (Observateur), 6 (Loyal) et 7 (Enthousiaste) et découvrez des pistes de transformation.</p>
 </header>
-code
-Code
 <main>
     <section class="intro" aria-label="Présentation">
-        <p>Cet outil explore les croyances limitantes typiques des types 5, 6 et 7 de l'ennéagramme. Votre évaluation reste stockée localement dans votre navigateur.</p>
-        <h3>Guide de l'échelle</h3>
-        <ul>
-            <li><strong>Accord 1-7 :</strong> 1 = pas du tout d'accord, 7 = tout à fait d'accord</li>
-        </ul>
+        <p>Cet outil explore les croyances limitantes typiques des types 5, 6 et 7. Évaluez celles qui résonnent en vous pour obtenir un classement et des propositions de croyances aidantes. Votre évaluation reste stockée localement dans votre navigateur.</p>
     </section>
 
     <form id="beliefForm" aria-label="Croyances">
         <div id="beliefList" role="group" aria-label="Liste des croyances"></div>
-
         <div class="actions">
-            <button type="button" class="primary" id="analyzeBtn">Analyser mes croyances</button>
+            <button type="button" class="primary" id="analyzeBtn">Analyser et Transformer</button>
             <button type="button" class="secondary" id="exportBtn">Exporter rapport TXT pour IA</button>
             <button type="button" class="danger" id="clearBtn">Effacer mes données</button>
         </div>
     </form>
 
     <section id="results" aria-label="Résultats" hidden>
-        <h2>Résultats</h2>
-        <table id="resultTable" aria-label="Tableau des résultats">
-            <thead>
-                <tr>
-                    <th data-key="rank">N° ↕</th>
-                    <th data-key="text">Croyance Limitante ↕</th>
-                    <th data-key="agreement">Accord ↕</th>
-                    <th data-key="score">Score ↕</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
+        <h2>Vos Pistes de Transformation</h2>
+        <div id="resultContainer"></div>
     </section>
 </main>
 
@@ -83,59 +87,56 @@ Code
 </footer>
 
 <script>
-    /* ===== CROYANCES LIMITANTES SPÉCIFIQUES TYPES 5-6-7 ===== */
-    const BELIEFS=[
-        // Type 5 – L'Observateur (Peur de l'incompétence et de l'envahissement)
-        "Je dois tout comprendre avant de pouvoir agir en sécurité.",
-        "Le monde extérieur est intrusif et exige trop de mes ressources.",
-        "Je n'en sais pas encore assez pour passer à l'action.",
-        "Demander de l'aide révèle mon incompétence.",
-        "Je ne dois surtout pas gaspiller mon temps et mon énergie.",
-        "Les émotions sont irrationnelles et peuvent obscurcir mon jugement.",
-        "Je suis plus en sécurité en observant à distance qu'en participant.",
-        "Je crains d'être envahi ou vidé par les attentes des autres.",
-        "Je n'ai pas les compétences nécessaires pour faire face au monde.",
-        "Me retirer du monde est la seule façon de préserver mon intégrité.",
-        "Être invisible est la meilleure des protections.",
-        "Je crains de me sentir vide et sans ressources à l'intérieur.",
-        "Je ne peux pas faire confiance à mon entourage pour respecter mes limites.",
+    /* ===== BASE DE DONNÉES DES CROYANCES (LIMITANTES ET AIDANTES) ===== */
+    const BELIEF_DATA = [
+        // Type 5 – L'Observateur
+        { id: 0, limiting: "Je dois tout comprendre avant de pouvoir agir en sécurité.", helping: "Je peux agir avec ce que je sais maintenant et apprendre en chemin.", explanation: "Passez de la collecte passive à l'expérimentation active. L'action génère plus de savoir que la seule observation." },
+        { id: 1, limiting: "Le monde extérieur est intrusif et exige trop de mes ressources.", helping: "Je choisis quand et comment m'engager, en posant des limites saines.", explanation: "La clé n'est pas le retrait, mais l'engagement conscient. Définir vos limites vous donne le contrôle de votre énergie." },
+        { id: 2, limiting: "Je n'en sais pas encore assez pour passer à l'action.", helping: "Je suis suffisamment compétent pour commencer maintenant.", explanation: "Cette croyance est une forme de procrastination. Fixez un seuil de connaissance 'suffisant' et lancez-vous. La perfection n'est pas requise." },
+        { id: 3, limiting: "Demander de l'aide révèle mon incompétence.", helping: "Demander de l'aide est une stratégie intelligente pour optimiser mes ressources.", explanation: "Les personnes compétentes savent utiliser toutes les ressources disponibles, y compris l'expertise des autres. C'est un signe d'efficacité." },
+        { id: 4, limiting: "Je ne dois surtout pas gaspiller mon temps et mon énergie.", helping: "J'investis mon énergie dans ce qui est important, y compris les relations et le repos.", explanation: "Redéfinissez le 'gaspillage'. Le lien social et le repos ne sont pas des pertes d'énergie, mais des recharges essentielles." },
+        { id: 5, limiting: "Les émotions sont irrationnelles et peuvent obscurcir mon jugement.", helping: "Mes émotions sont des données précieuses qui complètent ma logique.", explanation: "Les émotions sont des informations sur vos besoins et vos valeurs. Les intégrer à votre raisonnement mène à des décisions plus sages." },
+        { id: 6, limiting: "Je suis plus en sécurité en observant à distance qu'en participant.", helping: "La véritable sécurité se trouve dans l'engagement et l'expérience directe.", explanation: "L'observation crée une illusion de sécurité, mais la vie se vit dans l'arène. L'engagement développe une confiance réelle en vos capacités." },
+        { id: 7, limiting: "Je crains d'être envahi ou vidé par les attentes des autres.", helping: "Je suis le gardien de mon espace intérieur et je communique mes besoins.", explanation: "La peur de l'envahissement diminue lorsque vous savez que vous pouvez dire 'non' et que vos limites seront respectées, car vous les faites respecter." },
+        { id: 8, limiting: "Je n'ai pas les compétences nécessaires pour faire face au monde.", helping: "Je développe mes compétences à travers l'action et l'interaction.", explanation: "La compétence ne se construit pas en vase clos, mais par la pratique. Chaque interaction est une occasion d'apprendre et de grandir." },
+        { id: 9, limiting: "Me retirer du monde est la seule façon de préserver mon intégrité.", helping: "Je préserve mon intégrité en m'engageant dans le monde selon mes propres termes.", explanation: "L'intégrité n'est pas la solitude, mais l'alignement entre vos valeurs et vos actions dans le monde." },
+        { id: 10, limiting: "Être invisible est la meilleure des protections.", helping: "Être visible de manière choisie me permet d'avoir un impact et de créer des liens.", explanation: "L'invisibilité vous prive d'influence et de connexion. Osez partager votre savoir et votre présence de manière sélective." },
+        { id: 11, limiting: "Je crains de me sentir vide et sans ressources à l'intérieur.", helping: "Je suis une source inépuisable de curiosité et d'idées, et je me ressource par l'expérience.", explanation: "La sensation de vide vient du manque d'engagement, pas du manque de ressources internes. Nourrissez-vous d'expériences, pas seulement d'informations." },
+        { id: 12, limiting: "Je ne peux pas faire confiance à mon entourage pour respecter mes limites.", helping: "J'enseigne aux autres comment me traiter en posant et maintenant mes limites avec clarté.", explanation: "La confiance se construit. En affirmant vos besoins calmement et fermement, vous créez des relations plus sûres." },
 
-        // Type 6 – Le Loyal (Peur de manquer de soutien et d'être sans guide)
-        "Le monde est un endroit dangereux et imprévisible.",
-        "Je ne peux pas me faire confiance, j'ai besoin d'un avis extérieur.",
-        "Il faut anticiper le pire pour ne pas être pris au dépourvu.",
-        "Sans règles ou autorité claire, c'est le chaos.",
-        "Je dois tester la loyauté des autres en permanence.",
-        "Je suis incapable de me débrouiller seul face aux dangers.",
-        "Je crains la trahison et l'abandon par-dessus tout.",
-        "Faire une erreur pourrait avoir des conséquences catastrophiques.",
-        "Le doute est la preuve de mon intelligence, mais il me paralyse.",
-        "Je suis constamment en alerte, à la recherche de menaces potentielles.",
-        "Je me sens anxieux si je n'ai pas de plan B, C, et D.",
-        "Soit je me soumets à l'autorité pour être en sécurité, soit je la défie pour ne pas être contrôlé.",
-        "Les autres vont forcément finir par me décevoir ou me laisser tomber.",
+        // Type 6 – Le Loyal
+        { id: 13, limiting: "Le monde est un endroit dangereux et imprévisible.", helping: "Je peux naviguer dans l'incertitude en faisant confiance à ma capacité de réaction.", explanation: "Plutôt que de chercher une certitude extérieure, développez votre confiance intérieure. Vous avez les ressources pour gérer les imprévus." },
+        { id: 14, limiting: "Je ne peux pas me faire confiance, j'ai besoin d'un avis extérieur.", helping: "J'écoute les autres, mais la décision finale vient de ma propre sagesse intérieure.", explanation: "Consultez, puis recentrez-vous. Apprenez à écouter et à faire confiance à votre intuition. C'est un muscle qui se développe avec la pratique." },
+        { id: 15, limiting: "Il faut anticiper le pire pour ne pas être pris au dépourvu.", helping: "Je me prépare raisonnablement, puis je me concentre sur le présent avec confiance.", explanation: "L'hyper-vigilance épuise. La préparation (plan A) est utile, mais la rumination sur les scénarios catastrophes (B, C, D) paralyse." },
+        { id: 16, limiting: "Sans règles ou autorité claire, c'est le chaos.", helping: "Je suis ma propre autorité intérieure et je crée ma propre structure.", explanation: "Trouvez la sécurité en vous-même, pas seulement dans les systèmes externes. Définissez vos propres principes directeurs." },
+        { id: 17, limiting: "Je dois tester la loyauté des autres en permanence.", helping: "J'offre ma confiance et j'observe les actions, plutôt que de créer des tests.", explanation: "Les tests peuvent saboter les relations. La confiance est un choix initial qui se confirme (ou s'infirme) par les comportements observés." },
+        { id: 18, limiting: "Je suis incapable de me débrouiller seul face aux dangers.", helping: "J'ai le courage et les ressources pour faire face aux défis, seul ou accompagné.", explanation: "Reconnaissez vos succès passés. Vous avez déjà surmonté de nombreuses épreuves. Cette force est toujours en vous." },
+        { id: 19, limiting: "Je crains la trahison et l'abandon par-dessus tout.", helping: "Même si je suis déçu, je sais que je pourrai toujours compter sur moi-même.", explanation: "La peur de l'abandon diminue quand on développe une relation solide avec soi-même. Vous êtes votre propre ancre de sécurité." },
+        { id: 20, limiting: "Faire une erreur pourrait avoir des conséquences catastrophiques.", helping: "Une erreur est une opportunité d'apprendre, pas une catastrophe.", explanation: "Dé-dramatisez l'erreur. La plupart des erreurs sont réversibles et riches d'enseignements. La peur de l'erreur est plus limitante que l'erreur elle-même." },
+        { id: 21, limiting: "Le doute est la preuve de mon intelligence, mais il me paralyse.", helping: "J'utilise le doute pour questionner, puis je passe à l'action pour trouver des réponses.", explanation: "Transformez le doute en un outil actif (le questionnement) plutôt qu'un état passif (l'hésitation). L'action est l'antidote à la paralysie." },
+        { id: 22, limiting: "Je suis constamment en alerte, à la recherche de menaces potentielles.", helping: "Je choisis de porter mon attention sur le présent et sur ce qui va bien.", explanation: "L'hyper-vigilance est un choix attentionnel. Entraînez-vous à remarquer le positif et la sécurité dans le moment présent." },
+        { id: 23, limiting: "Je me sens anxieux si je n'ai pas de plan B, C, et D.", helping: "Un bon plan A et la confiance en ma capacité d'improviser sont suffisants.", explanation: "La sur-planification est une tentative de contrôler l'incontrôlable. Concentrez-vous sur la flexibilité et l'adaptabilité plutôt que sur des plans rigides." },
+        { id: 24, limiting: "Soit je me soumets à l'autorité pour être en sécurité, soit je la défie pour ne pas être contrôlé.", helping: "Je peux coopérer avec l'autorité tout en gardant mon esprit critique et mon indépendance.", explanation: "Sortez de la dualité soumission/rébellion. La vraie force réside dans une collaboration éclairée où vous restez fidèle à vous-même." },
+        { id: 25, limiting: "Les autres vont forcément finir par me décevoir ou me laisser tomber.", helping: "Je choisis de faire confiance tout en sachant que je suis capable de gérer la déception.", explanation: "Ne laissez pas la peur d'une potentielle déception vous priver de la joie de la connexion. Votre résilience est votre filet de sécurité." },
 
-        // Type 7 – L'Enthousiaste (Peur de la souffrance et du manque)
-        "Je dois à tout prix éviter la douleur et les émotions négatives.",
-        "Être limité ou contraint est insupportable.",
-        "Je dois garder toutes mes options ouvertes pour ne rien rater.",
-        "Si je m'arrête, je risque d'être rattrapé par l'ennui ou la tristesse.",
-        "Je ne devrais pas avoir à ressentir des sentiments désagréables.",
-        "La vie ne devrait être que plaisir, enthousiasme et nouveauté.",
-        "L'engagement est un piège qui limite ma liberté.",
-        "Je peux toujours rationaliser une expérience négative pour la rendre positive.",
-        "Je fuis les conflits en me réfugiant dans la planification ou l'humour.",
-        "La routine est l'ennemie de la joie de vivre.",
-        "Je suis insatiable, j'ai peur de manquer quelque chose d'essentiel.",
-        "Rester dans le futur et les possibilités me protège de l'inconfort du présent.",
-        "Je n'ai pas le droit d'être triste ou de mauvaise humeur."
+        // Type 7 – L'Enthousiaste
+        { id: 26, limiting: "Je dois à tout prix éviter la douleur et les émotions négatives.", helping: "J'accueille toutes mes émotions, car elles font partie d'une vie riche et complète.", explanation: "La fuite de la douleur ne fait que la renforcer. Traverser les émotions difficiles permet de les intégrer et de trouver une joie plus profonde et authentique." },
+        { id: 27, limiting: "Être limité ou contraint est insupportable.", helping: "Je trouve la créativité et la liberté à l'intérieur d'un cadre choisi.", explanation: "Les contraintes ne sont pas des prisons, mais des toiles sur lesquelles la créativité peut s'exprimer. L'engagement dans un projet ou une relation approfondit la liberté." },
+        { id: 28, limiting: "Je dois garder toutes mes options ouvertes pour ne rien rater.", helping: "Je trouve la satisfaction en choisissant et en m'engageant pleinement dans une option.", explanation: "La 'peur de rater' (FOMO) mène à la superficialité. La joie profonde vient de l'approfondissement d'un choix, pas du survol de toutes les possibilités." },
+        { id: 29, limiting: "Si je m'arrête, je risque d'être rattrapé par l'ennui ou la tristesse.", helping: "Dans le calme, je trouve le repos, la clarté et une paix intérieure durable.", explanation: "L'agitation est une fuite. Apprenez à vous poser. C'est dans le silence que vous pouvez entendre vos véritables désirs et apaiser votre esprit." },
+        { id: 30, limiting: "Je ne devrais pas avoir à ressentir de sentiments désagréables.", helping: "Toutes les émotions sont légitimes et m'apportent des informations utiles.", explanation: "Juger vos émotions comme 'bonnes' ou 'mauvaises' est une lutte perdue d'avance. Acceptez-les comme des messagers." },
+        { id: 31, limiting: "La vie ne devrait être que plaisir, enthousiasme et nouveauté.", helping: "Une vie épanouissante intègre à la fois la joie et la peine, l'excitation et le calme.", explanation: "La recherche exclusive du plaisir est épuisante et irréaliste. La maturité émotionnelle consiste à embrasser tout le spectre de l'expérience humaine." },
+        { id: 32, limiting: "L'engagement est un piège qui limite ma liberté.", helping: "L'engagement choisi est l'expression la plus élevée de ma liberté.", explanation: "La vraie liberté n'est pas l'absence de liens, mais le pouvoir de choisir ses liens. L'engagement donne une direction et un sens à votre énergie." },
+        { id: 33, limiting: "Je peux toujours rationaliser une expérience négative pour la rendre positive.", helping: "Je m'autorise à voir la réalité telle qu'elle est, même si elle est inconfortable.", explanation: "La rationalisation est un mécanisme de fuite. Affronter la réalité sans fard vous permet de la transformer réellement, au lieu de simplement la repeindre." },
+        { id: 34, limiting: "Je fuis les conflits en me réfugiant dans la planification ou l'humour.", helping: "J'aborde les situations difficiles avec courage et authenticité.", explanation: "L'humour et la planification peuvent être des outils, mais aussi des armures. Osez être vulnérable et direct pour créer des relations plus authentiques." },
+        { id: 35, limiting: "La routine est l'ennemie de la joie de vivre.", helping: "Des routines saines créent l'espace et l'énergie nécessaires pour l'aventure et la créativité.", explanation: "La routine n'est pas l'ennemie de la spontanéité, mais sa fondation. Une bonne structure libère l'esprit des décisions triviales." },
+        { id: 36, limiting: "Je suis insatiable, j'ai peur de manquer quelque chose d'essentiel.", helping: "Je trouve la plénitude dans l'appréciation profonde de ce que j'ai déjà ici et maintenant.", explanation: "Le sentiment de manque est un puits sans fond. La gratitude est la clé qui le comble. Entraînez-vous à savourer le présent." },
+        { id: 37, limiting: "Rester dans le futur et les possibilités me protège de l'inconfort du présent.", helping: "La seule vraie vie est dans le moment présent ; je choisis de l'habiter pleinement.", explanation: "La planification excessive du futur est une façon de ne pas vivre. Ancrez-vous dans vos sensations, dans l'ici et maintenant, pour goûter à la vie." },
+        { id: 38, limiting: "Je n'ai pas le droit d'être triste ou de mauvaise humeur.", helping: "J'ai le droit de ressentir toute la gamme des émotions humaines ; cela me rend complet.", explanation: "Se forcer à être positif est une forme de répression. Autorisez-vous la tristesse, la colère, la déception. C'est en les acceptant qu'elles peuvent passer." }
     ];
 
-    /* ===== STATE ===== */
     let beliefs = [];
-    let sortState = { key: 'score', asc: false };
 
-    /* ===== INIT / RENDER / SAVE ===== */
     function init() {
         const stored = localStorage.getItem('beliefExplorer567_lim');
         if (stored) { try { beliefs = JSON.parse(stored); } catch (e) { beliefs = []; } }
@@ -143,21 +144,20 @@ Code
         document.getElementById('analyzeBtn').addEventListener('click', analyze);
         document.getElementById('exportBtn').addEventListener('click', exportTXT);
         document.getElementById('clearBtn').addEventListener('click', clearData);
-        document.querySelectorAll('th[data-key]').forEach(th => th.addEventListener('click', () => sortTable(th.dataset.key)));
     }
     function renderBeliefs() {
         const container = document.getElementById('beliefList');
         container.innerHTML = '';
-        BELIEFS.forEach((text, idx) => {
-            const existing = beliefs.find(b => b.id === idx);
+        BELIEF_DATA.forEach(data => {
+            const existing = beliefs.find(b => b.id === data.id);
             const checked = existing ? 'checked' : '';
             const agreement = existing ? existing.agreement : 4;
             const card = document.createElement('div');
             card.className = 'belief-card'; if (!checked) card.classList.add('disabled');
             card.innerHTML = `
-                <span class="belief-number">#${idx+1}</span>
-                <input type="checkbox" id="b${idx}" ${checked} aria-label="Sélectionner cette croyance">
-                <label for="b${idx}" class="belief-text">${text}</label>
+                <span class="belief-number">#${data.id+1}</span>
+                <input type="checkbox" id="b${data.id}" ${checked} aria-label="Sélectionner cette croyance">
+                <label for="b${data.id}" class="belief-text">${data.limiting}</label>
                 <div class="controls">
                     <label>Accord 1-7</label>
                     <input type="range" min="1" max="7" value="${agreement}" aria-label="Accord">
@@ -165,75 +165,67 @@ Code
                 </div>
             `;
             const chk = card.querySelector('input[type="checkbox"]');
-            chk.addEventListener('change', () => { card.classList.toggle('disabled', !chk.checked); saveBelief(idx, text, chk.checked, card); });
+            chk.addEventListener('change', () => { card.classList.toggle('disabled', !chk.checked); saveBelief(data.id, chk.checked, card); });
             const slider = card.querySelector('input[type="range"]');
-            slider.addEventListener('input', () => { slider.nextElementSibling.textContent = slider.value; if (chk.checked) saveBelief(idx, text, true, card); });
+            slider.addEventListener('input', () => { slider.nextElementSibling.textContent = slider.value; if (chk.checked) saveBelief(data.id, true, card); });
             container.appendChild(card);
         });
     }
-    function saveBelief(id, text, selected, card) {
+    function saveBelief(id, selected, card) {
         const others = beliefs.filter(b => b.id !== id);
         if (selected) {
             const agreement = parseInt(card.querySelector('input[type="range"]').value);
-            const score = (agreement - 1) / 6;  // normalisation 0-1
-            others.push({ id, text, agreement, score });
+            const score = (agreement - 1) / 6; // normalisation 0-1
+            others.push({ id, agreement, score });
         }
         beliefs = others;
         localStorage.setItem('beliefExplorer567_lim', JSON.stringify(beliefs));
     }
-
-    /* ===== ANALYZE ===== */
     function analyze() {
         if (beliefs.length === 0) { alert("Veuillez sélectionner et évaluer au moins une croyance."); return; }
-        const tbody = document.querySelector('#resultTable tbody');
-        tbody.innerHTML = '';
+        
+        const container = document.getElementById('resultContainer');
+        container.innerHTML = '';
         const sorted = [...beliefs].sort((a, b) => b.score - a.score);
+
         sorted.forEach((b, i) => {
-            const tr = document.createElement('tr');
-            if (i < 10) tr.classList.add('top10');
-            const bar = `<span class="bar" style="width:${Math.max(4, b.score * 200)}px"></span>`;
-            tr.innerHTML = `<td>${b.id+1}</td><td>${b.text}</td><td>${b.agreement}</td><td>${b.score.toFixed(2)}${bar}</td>`;
-            tbody.appendChild(tr);
+            const beliefData = BELIEF_DATA.find(item => item.id === b.id);
+            if (!beliefData) return;
+
+            const card = document.createElement('div');
+            card.className = 'result-card';
+            if (i < 10) card.classList.add('top10');
+            
+            card.innerHTML = `
+                <div class="result-header">
+                    <h3>${beliefData.limiting}</h3>
+                    <span class="result-score">Score: ${b.score.toFixed(2)}</span>
+                </div>
+                <div class="belief-transform">
+                    <p class="belief-aidante">💡 Croyance Aidante → ${beliefData.helping}</p>
+                    <p class="belief-explication">${beliefData.explanation}</p>
+                </div>
+            `;
+            container.appendChild(card);
         });
         document.getElementById('results').hidden = false;
         document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
     }
 
-    /* ===== SORT ===== */
-    function sortTable(key) {
-        if (sortState.key === key) sortState.asc = !sortState.asc;
-        else { sortState.key = key; sortState.asc = false; }
-        let sortedBeliefs = [...beliefs]; // Create a copy to sort
-        sortedBeliefs.sort((a, b) => {
-            const va = a[key], vb = b[key];
-            const res = (typeof va === 'string' ? va.localeCompare(vb) : va - vb);
-            return sortState.asc ? res : -res;
-        });
-        
-        const tbody = document.querySelector('#resultTable tbody');
-        tbody.innerHTML = ''; // Clear existing table
-        sortedBeliefs.forEach((b, i) => {
-            const tr = document.createElement('tr');
-             if (i < 10 && key === 'score' && !sortState.asc) tr.classList.add('top10');
-            const bar = `<span class="bar" style="width:${Math.max(4, b.score * 200)}px"></span>`;
-            tr.innerHTML = `<td>${b.id+1}</td><td>${b.text}</td><td>${b.agreement}</td><td>${b.score.toFixed(2)}${bar}</td>`;
-            tbody.appendChild(tr);
-        });
-    }
-
-    /* ===== EXPORT TXT ===== */
     function exportTXT() {
         if (beliefs.length === 0) { alert("Aucune donnée à exporter."); return; }
         const top10 = [...beliefs].sort((a, b) => b.score - a.score).slice(0, 10);
         const date = new Date().toLocaleDateString('fr-FR');
         let content = `RAPPORT CROYANCES LIMITANTES - ENNÉAGRAMME 5-6-7\nDate: ${date}\nNombre de croyances évaluées: ${beliefs.length}\n\n=== MES 10 CROYANCES LIMITANTES LES PLUS FORTES (Types 5-6-7) ===\n\n`;
         top10.forEach((b, i) => {
-            content += `${i+1}. ${b.text}\n   N°${b.id+1} | Accord: ${b.agreement}/7 | Score: ${b.score.toFixed(2)}/1.00\n\n`;
+            const beliefText = BELIEF_DATA.find(item => item.id === b.id)?.limiting || 'Inconnue';
+            content += `${i+1}. ${beliefText}\n   N°${b.id+1} | Accord: ${b.agreement}/7 | Score: ${b.score.toFixed(2)}/1.00\n\n`;
         });
         content += `=== PROMPT POUR IA SPÉCIALISÉE ENNÉAGRAMME ===\n\nEn tant qu'expert en ennéagramme, analyse ces croyances limitantes (types 5, 6, 7) :\n\n1. DIAGNOSTIC DU TYPE DOMINANT : Quel type (5, 6, ou 7) semble le plus prédominant et pourquoi ? Identifie les 2-3 croyances qui le démontrent le plus clairement.\n\n2. PEURS FONDAMENTALES : Quelles sont les peurs racines qui émergent ? (Peur de l'incompétence/envahissement pour le 5, peur du manque de soutien pour le 6, peur de la souffrance/du manque pour le 7).\n\n3. AXES DE TRANSFORMATION :\n   - Pour le 5 : Comment puis-je passer de la collecte de savoir à l'expérimentation dans le réel ?\n   - Pour le 6 : Comment puis-je développer ma confiance en mon propre jugement intérieur ?\n   - Pour le 7 : Comment puis-je m'autoriser à rester présent face à l'inconfort sans fuir ?\n\n4. QUESTIONS DE COACHING PUISSANTES : Propose une question percutante pour chacune des 3 croyances les plus fortes afin de les remettre en question.\n\n=== DONNÉES COMPLÈTES ===\nFormat: N° | Croyance | Accord/7 | Score\n${'-'.repeat(60)}\n`;
         const allSorted = [...beliefs].sort((a, b) => b.score - a.score);
         allSorted.forEach(b => {
-            content += `${b.id+1} | "${b.text}" | ${b.agreement}/7 | ${b.score.toFixed(2)}\n`;
+            const beliefText = BELIEF_DATA.find(item => item.id === b.id)?.limiting || 'Inconnue';
+            content += `${b.id+1} | "${beliefText}" | ${b.agreement}/7 | ${b.score.toFixed(2)}\n`;
         });
         const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
         const url = URL.createObjectURL(blob);
@@ -244,7 +236,6 @@ Code
         URL.revokeObjectURL(url);
     }
 
-    /* ===== CLEAR ===== */
     function clearData() {
         if (!confirm("Voulez-vous vraiment supprimer toutes vos données ? Cette action est irréversible.")) return;
         localStorage.removeItem('beliefExplorer567_lim');
@@ -254,8 +245,8 @@ Code
         document.getElementById('results').hidden = true;
     }
 
-    /* ===== GO ===== */
     document.addEventListener('DOMContentLoaded', init);
 </script>
 </body>
 </html>
+```
